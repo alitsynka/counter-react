@@ -1,26 +1,62 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, {ChangeEvent, useEffect, useState} from 'react';
+import s from './App.module.css'
+import {Settings} from "./components/Settings/Settings";
+import {Count} from "./components/Count/Count";
+
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    let [count, setCount] = useState<number | string>(0)
+    let [maxValue, setMaxValue] = useState<number>(1)
+    let [minValue, setMinValue] = useState<number>(0)
+    let [disableButton, setDisableButton] = useState<boolean>(false)
+
+    const incrementCount = () => {
+        count < maxValue && typeof (count) === 'number' && setCount(count + 1)
+    }
+    const decrementCount = () => {
+        setCount(minValue)
+    }
+
+    const changeMaxValue = (e: ChangeEvent<HTMLInputElement>) => {
+        setMaxValue(e.currentTarget.valueAsNumber)
+        setDisableButton(true)
+        setCount('press set')
+    }
+
+    const changeMinValue = (e: ChangeEvent<HTMLInputElement>) => {
+        setMinValue(e.currentTarget.valueAsNumber)
+        setDisableButton(true)
+        setCount('press set')
+    }
+
+    const onChange = () => {
+        setDisableButton(false)
+        setMinValue(minValue)
+        setCount(minValue)
+        setMaxValue(maxValue)
+    }
+    useEffect(() => {
+        maxValue <= minValue && setCount('incorrect value')
+    })
+
+
+    return (
+        <div className={s.App}>
+            <Settings count={count}
+                maxValue={maxValue}
+                      minValue={minValue}
+                      changeMaxValue={changeMaxValue}
+                      changeMinValue={changeMinValue}
+                      onChange={onChange}
+            />
+            <Count minValue={minValue}
+                   count={count}
+                   maxValue={maxValue}
+                   disableButton={disableButton}
+                   incrementCount={incrementCount}
+                   decrementCount={decrementCount}/>
+        </div>
+    );
 }
 
 export default App;
